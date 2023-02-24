@@ -1,34 +1,70 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { useState } from "react";
+import { useEffect } from "react";
+import "./App.css";
+import Home from "./pages/Home";
+import { Routes, Route } from "react-router-dom";
+import axios from "axios";
+import Navbar from "./components/Navbar";
+import AllBeers from "./pages/AllBeers";
+import DisplayBeer from "./pages/DisplayBeer";
+import RandomBeer from "./pages/RandomBeer";
+import NewBeer from "./pages/NewBeer";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [beersAPI, setBeersAPI] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const fetchData = async () => {
+    const response = await axios.get(
+      `https://ih-beers-api2.herokuapp.com/beers`
+    );
+    setBeersAPI(response.data);
+  };
+
+  useEffect(() => {
+    fetchData();
+    console.log("refreshed");
+  }, [searchTerm]);
+
+  useEffect(() => {
+    // console.log(beersAPI)
+  }, [beersAPI]);
 
   return (
     <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Navbar />
+      {!!beersAPI.length && (
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/new" element={<NewBeer />} fetchData={fetchData} />
+          <Route path="/random" element={<RandomBeer />} />
+          <Route
+            path="/all"
+            element={
+              <AllBeers
+                allBeers={beersAPI.filter((beer) => {
+                  if (searchTerm === "") {
+                    return beer
+                  }
+                  else if (beer.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+                    return beer
+                } else {
+                  return undefined
+                }
+                })}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
+            }
+          />
+          <Route
+            path="/beers/:id"
+            element={<DisplayBeer allBeers={beersAPI} />}
+          />
+        </Routes>
+      )}
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
