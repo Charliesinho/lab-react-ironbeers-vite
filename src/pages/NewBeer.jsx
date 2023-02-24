@@ -82,7 +82,7 @@ function NewBeer({ fetchData }) {
           />
         </label>
         <label style={{display: "flex", flexDirection: "column", marginBottom: "20px", textAlign: "left", color: "black", fontWeight: "bold", fontSize: "13px", borderColor: "#d9d9d9"}}>
-          Price Per Day
+          Attenuation Level
           <input
           style={{width: "300px", height: "30px", borderRadius: "15px", borderStyle: "solid", borderWidth: "1px", padding: "5px", borderColor: "#c7c7c7"}}
             type="number"

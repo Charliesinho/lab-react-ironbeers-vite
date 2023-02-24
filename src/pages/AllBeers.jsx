@@ -1,10 +1,30 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import axios from "axios";
 
-function AllBeers({ allBeers, searchTerm, setSearchTerm }) {
+function AllBeers({ allBeers, searchTerm, setSearchTerm, setBeersAPI, fetchData }) {
+
   const handleUpdateEvent = async (event) => {
-    setSearchTerm(event.target.value);
+    event.preventDefault()
+    try {
+setSearchTerm(event.target.value);
+    const response = await axios.get(`https://ih-beers-api2.herokuapp.com/beers/search?q=${searchTerm}`);
+    console.log(response.data)
+    if (response.data.length > 0) {
+      setBeersAPI(response.data)
+    } else {
+      setBeersAPI([""])
+    }
+    } catch (err) {
+      console.log(err)
+    }    
   };
+
+  function showBeers () {
+    setSearchTerm("")
+    fetchData();
+  }
 
   return (
     <div className="generalAllBeers">
@@ -27,7 +47,7 @@ function AllBeers({ allBeers, searchTerm, setSearchTerm }) {
           onChange={handleUpdateEvent}
         />
       </form>
-      {allBeers.length > 0 ? (
+      {allBeers[0] !== "" ? (
         <div>
           {allBeers.map((beer) => {
             return (
@@ -55,6 +75,9 @@ function AllBeers({ allBeers, searchTerm, setSearchTerm }) {
       ) : (
         <div>
           <p>No beer found</p>
+          <button 
+          style={{backgroundColor: "#73c5e8", color: "white", borderRadius: "15px"}}
+          type="text" onClick={showBeers}>Show all Beers</button>
         </div>
       )}
     </div>

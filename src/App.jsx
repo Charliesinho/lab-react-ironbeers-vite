@@ -14,21 +14,20 @@ function App() {
   const [beersAPI, setBeersAPI] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const fetchData = async () => {
-    const response = await axios.get(
-      `https://ih-beers-api2.herokuapp.com/beers`
-    );
-    setBeersAPI(response.data);
+
+  const fetchData = async () => {    
+      const response = await axios.get(
+        `https://ih-beers-api2.herokuapp.com/beers`
+      );
+      setBeersAPI(response.data);    
   };
 
   useEffect(() => {
     fetchData();
     console.log("refreshed");
-  }, [searchTerm]);
+  }, []);
 
-  useEffect(() => {
-    // console.log(beersAPI)
-  }, [beersAPI]);
+ 
 
   return (
     <div className="App">
@@ -42,18 +41,11 @@ function App() {
             path="/all"
             element={
               <AllBeers
-                allBeers={beersAPI.filter((beer) => {
-                  if (searchTerm === "") {
-                    return beer
-                  }
-                  else if (beer.name.toLowerCase().includes(searchTerm.toLowerCase())) {
-                    return beer
-                } else {
-                  return undefined
-                }
-                })}
+                allBeers={beersAPI}
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
+                setBeersAPI={setBeersAPI}
+                fetchData={fetchData}
               />
             }
           />
